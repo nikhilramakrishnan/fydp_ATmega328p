@@ -11,7 +11,7 @@
 #define PIN_REFERENCE       12  //3
 
 #define SERIAL_BAUD_RATE    115200
-#define PER_CYCLE_DELAY     25
+#define PER_CYCLE_DELAY     500
 #define TOUCH_THRESH        25 //prolly change
 
 
@@ -49,35 +49,39 @@ void loop()
  pinMode(PIN_REFERENCE, INPUT);     //Effectively disconnect reference divider resistor
   digitalWrite(PIN_RIGHT, LOW);      //Left end of pot is at +5V, Right end is at GND
   delay(1);
-  int position_reading = 1023 - analogRead(PIN_WIPER);  //subtract to output position relative to Left end 
-  position_reading -= 512;  
+   
   
   /*** Now read position ***/
-  if(force_reading >= 780 && position_reading > 0 ){
+  
   pinMode(PIN_REFERENCE, INPUT);     //Effectively disconnect reference divider resistor
   digitalWrite(PIN_RIGHT, LOW);      //Left end of pot is at +5V, Right end is at GND
   delay(1);
+  int wiper_val  = analogRead(PIN_WIPER);
   int position_reading = 1023 - analogRead(PIN_WIPER);  //subtract to output position relative to Left end 
   position_reading -= 512;           //subtract half-scale reading; sensor center is position 0, left is -512, right is +512
   
   
   /*** If readings are valid, output position and force ***/
   
+  Serial.println("Postion Reading:");
+  Serial.println(position_reading);
+  
+ // Serial.println(wiper_val);
   if(force_reading >= TOUCH_THRESH)  //With no force on the sensor the wiper is floating, position readings would be bogus
   {
-    Serial.print("Position: ");
-    printFixed(position_reading, 3, true);
-    Serial.print("   Force: ");
-    printFixed(force_reading, 3, false);
-    Serial.println();
+   
+    //Serial.println("Position: ");
+    //Serial.print(wiper_val);
+    //Serial.println("   Force: ");
+    //printFixed(force_reading, 3, false);
+   // Serial.println();
   }
   else
   {
-    Serial.println("Position:        Force:   0");
+    //Serial.println("Position:        Force:   0");
   }
   
   delay(PER_CYCLE_DELAY);
-}
 }
 
 /**********************************************************************************************************
