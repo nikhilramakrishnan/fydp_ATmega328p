@@ -1,4 +1,8 @@
 /**********************************************************************************************************
+* Project: LinearPotExample.ino
+* By: Chris Wittmier @ Sensitronics LLC
+* LastRev: 07/28/2014
+* Description: Basic demonstration of Force Sensing Linear Potentiometer to accompany web tutorial.
 * Relative force and position readings are output to a serial terminal.
 **********************************************************************************************************/
 
@@ -6,13 +10,13 @@
 /**********************************************************************************************************
 * PIN DEFS / MACROS
 **********************************************************************************************************/
-#define PIN_RIGHT           A3 //2
-#define PIN_WIPER           A2 //A0
-#define PIN_REFERENCE       12  //3
+#define PIN_RIGHT           2
+#define PIN_WIPER           A0
+#define PIN_REFERENCE       3
 
 #define SERIAL_BAUD_RATE    115200
 #define PER_CYCLE_DELAY     25
-#define TOUCH_THRESH        25 //prolly change
+#define TOUCH_THRESH        25
 
 
 /**********************************************************************************************************
@@ -46,14 +50,10 @@ void loop()
   digitalWrite(PIN_RIGHT, HIGH);     //Both ends of pot are at +5V
   delay(1);
   int force_reading = analogRead(PIN_WIPER);
- pinMode(PIN_REFERENCE, INPUT);     //Effectively disconnect reference divider resistor
-  digitalWrite(PIN_RIGHT, LOW);      //Left end of pot is at +5V, Right end is at GND
-  delay(1);
-  int position_reading = 1023 - analogRead(PIN_WIPER);  //subtract to output position relative to Left end 
-  position_reading -= 512;  
+  
   
   /*** Now read position ***/
-  if(force_reading >= 780 && position_reading > 0 ){
+  
   pinMode(PIN_REFERENCE, INPUT);     //Effectively disconnect reference divider resistor
   digitalWrite(PIN_RIGHT, LOW);      //Left end of pot is at +5V, Right end is at GND
   delay(1);
@@ -78,7 +78,7 @@ void loop()
   
   delay(PER_CYCLE_DELAY);
 }
-}
+
 
 /**********************************************************************************************************
 * printFixed() - Serial Print with space padding for consistent positioning in terminal. Optional +/- sign
