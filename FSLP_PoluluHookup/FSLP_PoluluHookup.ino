@@ -34,10 +34,7 @@
  * to take readings from the FSLP and see them on your computer.
  */
 
-#include <PololuLedStrip.h>
-PololuLedStrip<12> ledStrip;
 #define LED_COUNT 60
-rgb_color colors[LED_COUNT];
 
 // To measure position, the sense line must be connected to a
 // pin capable of reading analog voltages.  For pressure,
@@ -48,6 +45,14 @@ const int fslpSenseLine = A2;
 const int fslpDriveLine1 = 8;
 const int fslpDriveLine2 = A3;
 const int fslpBotR0 = 9;
+
+int posarray[20];
+int arrayindex = 0;
+
+const String UP = "UP";
+const String DOWN = "DOWN";
+boolean up = false;
+int i = 0;
 
 void setup()
 {
@@ -73,9 +78,36 @@ void loop()
   }
 
   char report[80];
+  if (pressure != 0) {
   sprintf(report, "pressure: %5d   position: %5d\n",
     pressure, position);
   Serial.print(report);
+  }
+
+  int difference = 0;
+  posarray[arrayindex] = position;
+  arrayindex++;
+  if (arrayindex == 19) {
+    difference = posarray[19] - posarray[0];
+    arrayindex = 0;
+  }
+
+if (difference != 0) {
+  Serial.println(difference);
+  
+}
+
+
+   
+  if (pressure != 0) {
+  if(difference > 0) {
+    up = true;
+    Serial.println(UP);
+  } else if (difference < 0) {
+    up = false;
+    Serial.println(DOWN);
+  }
+  }
 
   // Scale the position reading to be from 0 to the
   // number of LEDs.
@@ -94,17 +126,12 @@ void loop()
     {
       // Light up the LEDs with indices lower than the adjustedLocation.
       // Set the color of the LEDs based on the adjustedPressure
-      colors[i] = (rgb_color){ adjustedPressure, 0, 255 - adjustedPressure };
     }
     else
     {
       // Turn off the other LEDs.
-      colors[i] = (rgb_color){ 0, 0, 0 };
     }
   }
-
-  // Update the LED strip with values from the above for loop.
-  ledStrip.write(colors, LED_COUNT);
 
   delay(20);
 }

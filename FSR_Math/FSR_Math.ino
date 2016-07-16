@@ -15,11 +15,11 @@ Development environment specifics:
 Arduino 1.6.7
 ******************************************************************************/
 const int FSR_PIN = A0; // Pin connected to FSR/resistor divider
-
+const int FSR_PIN_RIGHT = A1;
 // Measure the voltage at 5V and resistance of your 3.3k resistor, and enter
 // their value's below:
 const float VCC = 4.98; // Measured voltage of Ardunio 5V line
-const float R_DIV = 3230.0; // Measured resistance of 3.3k resistor
+const float R_DIV = 2970.0; // Measured resistance of 3.3k resistor
 
 void setup() 
 {
