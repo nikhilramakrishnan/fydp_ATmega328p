@@ -1,6 +1,11 @@
 
 #define LED_COUNT 60
 
+const int FSR_PIN_LEFT = A0; // Pin connected to FSR/resistor divider
+const int FSR_PIN_RIGHT = A1;
+const float VCC = 4.98; // Measured voltage of Ardunio 5V line
+const float R_DIV = 2970.0; // Measured resistance of 3.3k resistor
+
 const int fslpSenseLine = A2;
 const int fslpDriveLine1 = 8;
 const int fslpDriveLine2 = A3;
@@ -8,6 +13,7 @@ const int fslpBotR0 = 9;
 const String UP = "UP";
 const String DOWN = "DOWN";
 const String ERR = "ERR";
+const String SWIPE = "SWIPE";
 
 int position1;
 int position2;
@@ -18,6 +24,8 @@ int maxDelay;
 void setup()
 {
   Serial.begin(9600);
+  pinMode(FSR_PIN_LEFT, INPUT);
+  pinMode(FSR_PIN_RIGHT, INPUT);
   delay(250);
   position1 = 0;
   position2 = 0;
@@ -28,6 +36,26 @@ void setup()
 
 void loop()
 {
+  // Part 1: loop to spot force
+  int fsrLeftADC = analogRead(FSR_PIN_LEFT);
+  //int fsrRightADC = analogRead(FSR_PIN_RIGHT);
+  
+  if (fsrLeftADC != 0) // If the analog reading is non-zero
+  {
+    // ignore right FSR for now, doesn't work great.
+    
+    String leftForce = calculateForce(fsrLeftADC);
+    Serial.println("Left:" + String(leftForce));
+    Serial.println(SWIPE);
+    Serial.println("---");
+    delay(60);
+  }
+  else
+  {
+    // No pressure detected
+  }
+
+  // Part 2: loop to spot position
   int pressure, position;
 
   pressure = fslpGetPressure();
@@ -82,12 +110,6 @@ void loop()
   }
 }
 
-// This function follows the steps described in the FSLP
-// integration guide to measure the position of a force on the
-// sensor.  The return value of this function is proportional to
-// the physical distance from drive line 2, and it is between
-// 0 and 1023.  This function does not give meaningful results
-// if fslpGetPressure is returning 0.
 int fslpGetPosition()
 {
   // Step 1 - Clear the charge on the sensor.
@@ -116,11 +138,6 @@ int fslpGetPosition()
   return analogRead(fslpSenseLine);
 }
 
-// This function follows the steps described in the FSLP
-// integration guide to measure the pressure on the sensor.
-// The value returned is usually between 0 (no pressure)
-// and 500 (very high pressure), but could be as high as
-// 32736.
 int fslpGetPressure()
 {
   // Step 1 - Set up the appropriate drive line voltages.
@@ -174,6 +191,25 @@ String isUp() {
   } else {
     return ERR;
   }
+}
+
+String calculateForce(int fsrADC) {
+  // Use ADC reading to calculate voltage:
+    float fsrV = fsrADC * VCC / 1023.0;
+    // Use voltage and static resistor value to 
+    // calculate FSR resistance:
+    float fsrR = R_DIV * (VCC / fsrV - 1.0);
+    Serial.println("Resistance: " + String(fsrR) + " ohms");
+    // Guesstimate force based on slopes in figure 3 of
+    // FSR datasheet:
+    float force;
+    float fsrG = 1.0 / fsrR; // Calculate conductance
+    // Break parabolic curve down into two linear slopes:
+    if (fsrR <= 600) 
+      force = (fsrG - 0.00075) / 0.00000032639;
+    else
+      force =  fsrG / 0.000000642857;
+    return "Force: " + String(force) + " g";
 }
 
 // Performs an ADC reading on the internal GND channel in order
