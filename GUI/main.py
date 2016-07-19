@@ -18,8 +18,8 @@ VOLUME_FONT = ("Helvetica", MAX_HEIGHT/4, "bold")
 class MainApp(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
-        self.bind('<Left>', self.left_key)
-        self.bind('<Right>', self.right_key)
+        self.bind('<<DOWN_SWIPE>>', self.left_key)
+        self.bind('<<UP_SWIPE>>', self.right_key)
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
