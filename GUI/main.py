@@ -45,8 +45,6 @@ class MainApp(tk.Tk):
             elif msgs == 'UP':
                 print "UP"
                 self.event_generate("<<UP_SWIPE>>", when="tail")
-            else:
-                print "ERR"
         self.after(10, self.readSerial) # check serial again soo
 
     def left_key(self, event):
