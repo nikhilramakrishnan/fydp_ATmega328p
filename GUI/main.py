@@ -40,10 +40,13 @@ class MainApp(tk.Tk):
             msg = ser.readline() # attempt to read a character from Serial
             msgs = re.sub(r'\\r|\\n', '', msg);
             if msgs == 'DOWN':
+                print "DOWN SWIPE"
                 self.event_generate("<<DOWN_SWIPE>>", when="tail")
             elif msgs == 'UP':
+                print "UP"
                 self.event_generate("<<UP_SWIPE>>", when="tail")
-
+            else:
+                print "ERR"
         self.after(10, self.readSerial) # check serial again soo
 
     def left_key(self, event):
