@@ -230,5 +230,5 @@ if __name__ == '__main__':
     app.attributes("-fullscreen", True)
     app.title(PROGRAM_NAME)
     print "Starting app"
-    app.after(100, readSerial)
+    app.after(100, app.readSerial)
     app.mainloop()
