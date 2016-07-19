@@ -1,6 +1,13 @@
 import Tkinter as tk
 from Tkinter import StringVar, IntVar
 from PIL import Image, ImageTk
+import serial
+import os
+
+serialPort = "/dev/ttyACM0"
+baudRate = 9600
+ser = serial.Serial(serialPort, baudRate, timeout=0, writeTimeout=0)
+serBuffer = ""
 
 PROGRAM_NAME = ' Infotainment '
 MAX_WIDTH = 1280
@@ -27,6 +34,17 @@ class MainApp(tk.Tk):
             frame.grid(row=0, column=0, sticky="nsew")
 
         self.update_view()
+
+    def readSerial(self):
+        while True:
+            msg = ser.readline() # attempt to read a character from Serial
+            msgs = re.sub(r'\\r|\\n', msg);
+            if msgs == 'DOWN':
+                self.event_generate("<<DOWN_SWIPE>>", when="tail")
+            elif msgs == 'UP':
+                self.event_generate("<<UP_SWIPE>>", when="tail")
+
+        self.after(10, self.readSerial) # check serial again soo
 
     def left_key(self, event):
         print "Left key pressed"
@@ -202,6 +220,9 @@ class FrameFive(tk.Frame):
 
 FRAME_LIST = (FrameOne, FrameTwo, FrameThree, FrameFour, FrameFive)
 
+
+
+
 if __name__ == '__main__':
     app = MainApp();
     app.geometry('{}x{}'.format(MAX_WIDTH, MAX_HEIGHT))
@@ -209,4 +230,5 @@ if __name__ == '__main__':
     app.attributes("-fullscreen", True)
     app.title(PROGRAM_NAME)
     print "Starting app"
+    app.after(100, readSerial)
     app.mainloop()
