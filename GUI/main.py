@@ -38,7 +38,7 @@ class MainApp(tk.Tk):
     def readSerial(self):
         while True:
             msg = ser.readline() # attempt to read a character from Serial
-            msgs = re.sub(r'\\r|\\n', msg);
+            msgs = re.sub(r'\\r|\\n', '' msg);
             if msgs == 'DOWN':
                 self.event_generate("<<DOWN_SWIPE>>", when="tail")
             elif msgs == 'UP':
