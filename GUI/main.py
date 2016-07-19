@@ -3,7 +3,7 @@ from Tkinter import StringVar, IntVar
 from PIL import Image, ImageTk
 import serial
 import os
-
+import re
 serialPort = "/dev/ttyACM0"
 baudRate = 9600
 ser = serial.Serial(serialPort, baudRate, timeout=0, writeTimeout=0)
