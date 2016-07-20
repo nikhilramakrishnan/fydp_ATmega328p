@@ -18,8 +18,8 @@ VOLUME_FONT = ("Helvetica", MAX_HEIGHT/4, "bold")
 class MainApp(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
-        self.bind('<<DOWN_SWIPE>>', self.left_key)
-        self.bind('<<UP_SWIPE>>', self.right_key)
+        self.bind('<<LEFT_SQUEEZE>>', self.left_key)
+        self.bind('<<RIGHT_SQUEEZE>>', self.right_key)
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
@@ -37,14 +37,20 @@ class MainApp(tk.Tk):
 
     def readSerial(self):
         while True:
-            msg = ser.readline() # attempt to read a character from Serial
-            msgs = re.sub(r'\\r|\\n', '', msg);
-            if msgs == 'DOWN':
+            full_msg = ser.readline() # attempt to read a character from Serial
+            msg = re.sub(r'\\r|\\n', '', full_msg);
+            if msg == 'DOWN':
                 print "DOWN SWIPE"
                 self.event_generate("<<DOWN_SWIPE>>", when="tail")
-            elif msgs == 'UP':
+            elif msg == 'UP':
                 print "UP SWIPE"
                 self.event_generate("<<UP_SWIPE>>", when="tail")
+            elif msg == 'LEFT':
+                print 'LEFT SQUEEZE'
+                self.event_generate("<<LEFT_SQUEEZE>>", when="tail")
+            elif msg == 'RIGHT':
+                print 'RIGHT SQUEEZE'
+                self.event_generate("<<RIGHT_SQUEEZE>>", when="tail")
             else:
                 break
         self.after(10, self.readSerial) # check serial again soo
@@ -81,11 +87,11 @@ class FrameOne(tk.Frame):
         insideFrame = tk.Frame(self)
         insideFrame.pack(side="top", pady=MAX_HEIGHT/2)
 
-        path = "volume.png"
-        img = Image.open(path).resize((250, 250), Image.ANTIALIAS)
-        self.volume_pic = ImageTk.PhotoImage(img)
-        labelVolImg = tk.Label(insideFrame, image=self.volume_pic)
-        labelVolImg.pack(side="left", fill="x", pady=10, padx=50)
+        # path = "volume.png"
+        # img = Image.open(path).resize((250, 250), Image.ANTIALIAS)
+        # self.volume_pic = ImageTk.PhotoImage(img)
+        # labelVolImg = tk.Label(insideFrame, image=self.volume_pic)
+        # labelVolImg.pack(side="left", fill="x", pady=10, padx=50)
 
         labelVolPer = tk.Label(insideFrame, text="%", font=VOLUME_FONT)
         labelVolPer.pack(side="right", fill="x", pady=10, padx=50)
@@ -93,10 +99,10 @@ class FrameOne(tk.Frame):
         labelVol.pack(side="right", fill="x", pady=10, padx=20)
 
     def switch_bindings(self, controller):
-        self.controller.unbind('<Up>')
-        self.controller.unbind('<Down>')
-        self.controller.bind('<Up>', self.up_key)
-        self.controller.bind('<Down>', self.down_key)
+        self.controller.unbind('<<UP_SWIPE>>')
+        self.controller.unbind('<<DOWN_SWIPE>>')
+        self.controller.bind('<<UP_SWIPE>>', self.up_key)
+        self.controller.bind('<<DOWN_SWIPE>>', self.down_key)
 
     def up_key(self, event):
         print "increase volume"
@@ -126,11 +132,11 @@ class FrameTwo(tk.Frame):
         insideFrame = tk.Frame(self)
         insideFrame.pack(side="top", pady=MAX_HEIGHT/2)
 
-        path = "volume.png"
-        img = Image.open(path).resize((250, 250), Image.ANTIALIAS)
-        self.volume_pic = ImageTk.PhotoImage(img)
-        labelVolImg = tk.Label(insideFrame, image=self.volume_pic)
-        labelVolImg.pack(side="left", fill="x", pady=10, padx=50)
+        # path = "volume.png"
+        # img = Image.open(path).resize((250, 250), Image.ANTIALIAS)
+        # self.volume_pic = ImageTk.PhotoImage(img)
+        # labelVolImg = tk.Label(insideFrame, image=self.volume_pic)
+        # labelVolImg.pack(side="left", fill="x", pady=10, padx=50)
 
         labelVolPer = tk.Label(insideFrame, text="AM", font=VOLUME_FONT)
         labelVolPer.pack(side="right", fill="x", pady=10, padx=50)
@@ -222,9 +228,6 @@ class FrameFive(tk.Frame):
         print "decrease"
 
 FRAME_LIST = (FrameOne, FrameTwo, FrameThree, FrameFour, FrameFive)
-
-
-
 
 if __name__ == '__main__':
     app = MainApp();
