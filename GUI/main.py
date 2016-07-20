@@ -36,20 +36,18 @@ class MainApp(tk.Tk):
         self.update_view()
 
     def readSerial(self):
-        while True:
-            full_msg = ser.readline() # attempt to read a character from Serial
-            msg = re.sub(r'\\r|\\n', '', full_msg);
-            if msg == 'DOWN':
-                print "DOWN SWIPE"
-                self.event_generate("<<DOWN_SWIPE>>", when="tail")
-            elif msg == 'UP':
-                print "UP SWIPE"
-                self.event_generate("<<UP_SWIPE>>", when="tail")
-            elif msg == 'SQUEEZE':
-                print 'SQUEEZE'
-                self.event_generate("<<RIGHT_SQUEEZE>>", when="tail")
-            else:
-                break
+        full_msg = ser.readline() # attempt to read a character from Serial
+        msg = re.sub(r'\\r|\\n', '', full_msg);
+        if msg == 'DOWN':
+            print "DOWN SWIPE"
+            self.event_generate("<<DOWN_SWIPE>>", when="tail")
+        elif msg == 'UP':
+            print "UP SWIPE"
+            self.event_generate("<<UP_SWIPE>>", when="tail")
+        elif msg == 'SQUEEZE':
+            print 'SQUEEZE'
+            self.event_generate("<<RIGHT_SQUEEZE>>", when="tail")
+
         self.after(10, self.readSerial) # check serial again soo
 
     def left_key(self, event):
