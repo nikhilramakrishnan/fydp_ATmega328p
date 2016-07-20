@@ -13,7 +13,7 @@ const int fslpBotR0 = 9;
 const String UP = "UP";
 const String DOWN = "DOWN";
 const String ERR = "ERR";
-const String SWIPE = "SWIPE";
+const String SQUEEZE = "SQUEEZE";
 
 int position1;
 int position2;
@@ -38,15 +38,13 @@ void loop()
 {
   // Part 1: loop to spot force
   int fsrLeftADC = analogRead(FSR_PIN_LEFT);
+  int fsrRightADC = 0;
   //int fsrRightADC = analogRead(FSR_PIN_RIGHT);
   
-  if (fsrLeftADC != 0) // If the analog reading is non-zero
+  int leftForce = calculateForce(fsrLeftADC);
+  if (leftForce > 0.5) // If the right FSR has 0.5g reading
   {
-    // ignore right FSR for now, doesn't work great.
-    
-    String leftForce = calculateForce(fsrLeftADC);
-    Serial.println("Left:" + String(leftForce));
-    Serial.println(SWIPE);
+    Serial.println(SQUEEZE);
     Serial.println("---");
     delay(60);
   }
@@ -86,18 +84,7 @@ void loop()
       positionCounter = 0;
       Serial.println(isUp());
       Serial.println("---");
-//      Serial.println(position1);
-//      Serial.println(position2);
-//      Serial.println(position3);
-//      Serial.println("---");
     }
-  }
-
-  char report[80];
-  if (pressure != 0) {
-  //sprintf(report, "pressure: %5d   position: %5d\n",
-  //  pressure, position);
-  //Serial.print(report);
   }
 
   delay(20);
@@ -193,13 +180,12 @@ String isUp() {
   }
 }
 
-String calculateForce(int fsrADC) {
+int calculateForce(int fsrADC) {
   // Use ADC reading to calculate voltage:
     float fsrV = fsrADC * VCC / 1023.0;
     // Use voltage and static resistor value to 
     // calculate FSR resistance:
     float fsrR = R_DIV * (VCC / fsrV - 1.0);
-    Serial.println("Resistance: " + String(fsrR) + " ohms");
     // Guesstimate force based on slopes in figure 3 of
     // FSR datasheet:
     float force;
@@ -209,7 +195,7 @@ String calculateForce(int fsrADC) {
       force = (fsrG - 0.00075) / 0.00000032639;
     else
       force =  fsrG / 0.000000642857;
-    return "Force: " + String(force) + " g";
+    return force;
 }
 
 // Performs an ADC reading on the internal GND channel in order
