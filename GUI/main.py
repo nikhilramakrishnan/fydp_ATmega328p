@@ -45,11 +45,8 @@ class MainApp(tk.Tk):
             elif msg == 'UP':
                 print "UP SWIPE"
                 self.event_generate("<<UP_SWIPE>>", when="tail")
-            elif msg == 'LEFT':
-                print 'LEFT SQUEEZE'
-                self.event_generate("<<LEFT_SQUEEZE>>", when="tail")
-            elif msg == 'RIGHT':
-                print 'RIGHT SQUEEZE'
+            elif msg == 'SQUEEZE':
+                print 'SQUEEZE'
                 self.event_generate("<<RIGHT_SQUEEZE>>", when="tail")
             else:
                 break
