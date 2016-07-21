@@ -75,11 +75,11 @@ void loop()
     // The resolution is too high for fat fingers to interpret. 
     // Reduce the resolution and notice the pattern. 
     if (positionCounter == 1) {
-      position1 = position/5;
+      position1 = position/4;
     } else if (positionCounter == 2) {
-      position2 = position/5;
+      position2 = position/4;
     } else if (positionCounter == 3) {
-      position3 = position/5;
+      position3 = position/4;
       positionCounter = 0;
       Serial.println(isUp());
     }
@@ -87,7 +87,7 @@ void loop()
 
   delay(20);
   maxDelay = maxDelay + 20;
-  if (maxDelay == 60) {
+  if (maxDelay > 220) {
     position1 = 0;
     position2 = 0;
     position3 = 0;
@@ -165,13 +165,13 @@ String isUp() {
     return UP;
   } else if (secondDifference > 2){
     return UP;
-  } else if (totalDifference > 5) {
+  } else if (totalDifference > 0) {
     return UP;
   } else if (firstDifference < 2) {
     return DOWN;
   } else if (secondDifference < 2) {
     return DOWN;
-  } else if (totalDifference < -5) {
+  } else if (totalDifference < 0) {
     return DOWN;
   } else {
     return ERR;
