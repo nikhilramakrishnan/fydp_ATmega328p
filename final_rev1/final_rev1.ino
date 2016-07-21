@@ -45,7 +45,6 @@ void loop()
   if (leftForce > 0.5) // If the right FSR has 0.5g reading
   {
     Serial.println(SQUEEZE);
-    Serial.println("---");
     delay(60);
   }
   else
@@ -83,7 +82,6 @@ void loop()
       position3 = position/5;
       positionCounter = 0;
       Serial.println(isUp());
-      Serial.println("---");
     }
   }
 
@@ -167,13 +165,13 @@ String isUp() {
     return UP;
   } else if (secondDifference > 2){
     return UP;
-  } else if (totalDifference > 0) {
+  } else if (totalDifference > 5) {
     return UP;
   } else if (firstDifference < 2) {
     return DOWN;
   } else if (secondDifference < 2) {
     return DOWN;
-  } else if (totalDifference < 0) {
+  } else if (totalDifference < -5) {
     return DOWN;
   } else {
     return ERR;
