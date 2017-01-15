@@ -1,1 +1,6 @@
 I just needed to make a folder
+
+Either a bootloader will need to be flashed into the atmega or access to an ISP for direct programming (freeing up space)
+
+The following describes how to use a second arduino to act as an AVR-ISP
+https://www.arduino.cc/en/Tutorial/ArduinoISP
